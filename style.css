@@ -10,9 +10,12 @@ h1{
   color:#a00000;text-align:center}
 
 /* ─── панель кнопок ─────────────────────────────────────────── */
+/* ─── панель кнопок (липнет под заголовком) ─── */
 .panel{
-  position:fixed;top:12px;left:50%;transform:translateX(-50%);
-  display:flex;gap:8px;flex-wrap:wrap;z-index:5;padding:4px}
+  position:sticky;   /* вместо fixed */
+  top:calc(56px + 4px);   /* высота h1 ≈ 56 px */
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:10px;z-index:5;padding:4px}
 button{
   padding:10px 14px;font-size:1rem;border:none;border-radius:10px;
   color:#fff;min-width:90px;cursor:pointer;
