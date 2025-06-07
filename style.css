@@ -1,70 +1,53 @@
-/* ===== базовые стили страницы ===== */
-*{box-sizing:border-box;margin:0;padding:0}
+/* ─── базовая вёрстка ───────────────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box}
 body{
-  font-family:system-ui,sans-serif;
+  font-family:sans-serif;
   height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-start;
-  background:radial-gradient(circle,#ffecec 0%,#ffffff 80%);
-  overflow:hidden;
-}
+  align-items:center;background:#fffbe9;overflow:hidden}
 h1{
-  margin:18px 0 8px;
-  color:#a00000;
-  font-size:clamp(1.4rem,2vw+1rem,2.2rem);
-  text-align:center;
-}
+  margin:16px 8px 10px;
+  font-size:clamp(1.2rem,2.4vw + 1rem,1.8rem);
+  color:#a00000;text-align:center}
 
-/* ===== игровая зона ===== */
-#scene{
-  position:relative;flex:1;width:100%;max-width:1000px;
-  border:2px solid #ffdddd;border-radius:12px;overflow:hidden;
-  background:repeating-linear-gradient(135deg,
-            rgba(255,255,255,0) 0 20px,
-            rgba(255,240,240,.4) 20px 40px);
-}
-
-/* ===== кнопки ===== */
+/* ─── панель кнопок ─────────────────────────────────────────── */
+.panel{
+  position:fixed;top:12px;left:50%;transform:translateX(-50%);
+  display:flex;gap:8px;flex-wrap:wrap;z-index:5;padding:4px}
 button{
-  position:fixed;top:12px;padding:10px 14px;
-  font-size:.9rem;border:none;border-radius:8px;
-  color:#fff;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.25);
-}
-#saveBtn   {right:172px;background:#4caf50}
-#loadBtn   {right: 96px;background:#2196f3}
-#immunoBtn {right: 12px;background:#ff6161}
-button:disabled{opacity:.55;cursor:default}
+  padding:10px 14px;font-size:1rem;border:none;border-radius:10px;
+  color:#fff;min-width:90px;cursor:pointer;
+  box-shadow:0 2px 5px rgba(0,0,0,.25)}
+#antibiotic{background:#2196f3}
+#gcsf      {background:#4caf50}
+#immunodef {background:#ff6161}
+button:disabled{opacity:.55}
 
-/* ===== итоговый оверлей ===== */
-#overlay{
-  position:absolute;inset:0;display:flex;
-  align-items:center;justify-content:center;
-  font-weight:700;font-size:clamp(2rem,6vw,5rem);
-  background:rgba(0,0,0,.8);color:#ff3232;          /* красный → поражение */
-  letter-spacing:2px;text-shadow:0 0 6px #000;
-  opacity:0;pointer-events:none;transition:opacity .8s;
-}
-#overlay.show{opacity:1}
+/* ─── игровое поле ──────────────────────────────────────────── */
+#scene{
+  flex:1;width:100%;max-width:1000px;position:relative;overflow:hidden;
+  border-top:2px solid #ffdddd;
+  background:repeating-linear-gradient(135deg,
+           rgba(255,255,255,0) 0 20px,
+           rgba(255,240,240,.4) 20px 40px)}
 
-/* ===== общие свойства частиц ===== */
-.entity{
-  position:absolute;border-radius:50%;pointer-events:none;
-  transform:translate(-50%,-50%);
-}
+/* ─── финальный баннер ──────────────────────────────────────── */
+#banner{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-weight:700;letter-spacing:1px;text-shadow:0 0 6px #000;
+  font-size:clamp(2rem,6vw,4rem);background:rgba(0,0,0,.85);
+  color:#ff3232;opacity:0;pointer-events:none;transition:opacity .8s;z-index:4}
+#banner.show{opacity:1}
+.win{color:#00e676}
 
-/* эритроцит */
-.erythrocyte{
+/* ─── клетки ───────────────────────────────────────────────── */
+.entity{position:absolute;transform:translate(-50%,-50%);pointer-events:none;border-radius:50%}
+.ery{
   width:60px;height:60px;
   background:radial-gradient(circle at 30% 30%,#cc0000,#840000);
-  box-shadow:0 0 10px rgba(200,0,0,.4);
-}
-
-/* лейкоцит */
-.leukocyte{
+  box-shadow:0 0 10px rgba(200,0,0,.4)}
+.leu{
   width:70px;height:70px;
   background:radial-gradient(circle at 30% 30%,#d8f1ff,#9ad0ff 70%,#79bfff);
-  box-shadow:0 0 12px rgba(0,120,255,.5);
-}
-
-/* бактерия + состояние «slow» */
-.bacteria{transition:filter .2s}
-.bacteria.slow{filter:brightness(.6) saturate(.6)}
+  box-shadow:0 0 12px rgba(0,120,255,.5)}
+.bac{transition:filter .2s}
+.bac.slow{filter:brightness(.6) saturate(.6)}
