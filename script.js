@@ -1,9 +1,8 @@
-// Можно добавить взаимодействие — при клике ускорить клетку
 const cell = document.getElementById('cell');
 
-cell.addEventListener('click', () => {
-  cell.style.animationDuration = '1s';
-  setTimeout(() => {
-    cell.style.animationDuration = '5s';
-  }, 2000);
+document.addEventListener('mousemove', (event) => {
+  const x = event.clientX - 50; // центрируем по клетке (ширина/2)
+  const y = event.clientY - 50;
+  cell.style.left = `${x}px`;
+  cell.style.top = `${y}px`;
 });
