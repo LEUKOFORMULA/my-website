@@ -1,34 +1,26 @@
-/****************************************************************
- *  Иммунный симулятор (mobile-friendly)
- ****************************************************************/
 window.addEventListener('DOMContentLoaded', () => {
-
-  /* DOM */
   const scene  = document.getElementById('scene');
   const banner = document.getElementById('banner');
-  const btnAb  = document.getElementById('antibiotic');
-  const btnG   = document.getElementById('gcsf');
-  const btnIm  = document.getElementById('immunodef');
+  const resultText = document.getElementById('resultText');
+  const restartBtn = document.getElementById('restartBtn');
+  const btnAb = document.getElementById('antibiotic');
+  const btnG  = document.getElementById('gcsf');
+  const btnIm = document.getElementById('immunodef');
 
-  /* размеры */
   let W = scene.clientWidth, H = scene.clientHeight;
   window.addEventListener('resize', () => {
-    W = scene.clientWidth; H = scene.clientHeight;
+    W = scene.clientWidth;
+    H = scene.clientHeight;
   });
 
-  /* параметры */
   const START = { ery:10, leu:6, bac:30 };
   const ANTIB_MS = 5000, REPL_MS = 4000, OUTBREAK = 10, MAX_ENT = 500;
   const SPEED = { ery:.8, leu:1.6 };
   const WIN = '#00e676', LOSS = '#ff3232';
 
-  /* состояние */
-  const ents = [];
-  let antibiotic = false, immunodef = false, ended = false;
-  const timers = [];           // храним id setInterval / setTimeout
-  let rafId;                    // requestAnimationFrame id
+  let ents = [], antibiotic = false, immunodef = false, ended = false;
+  let timers = [], rafId;
 
-  /* утилиты */
   const grads=[
     'radial-gradient(circle at 30% 30%,#1fa700,#0b6400 70%)',
     'radial-gradient(circle at 30% 30%,#a56d00,#5a3700 70%)',
@@ -38,19 +30,16 @@ window.addEventListener('DOMContentLoaded', () => {
   const rnd = (a,b)=>Math.random()*(b-a)+a;
   const dist2=(a,b)=>(a.x-b.x)**2+(a.y-b.y)**2;
 
-  /* создать клетку */
   function spawn(type, x = null, y = null){
     if(ents.length >= MAX_ENT) return;
     const el=document.createElement('div');
     el.className=`entity ${type}`; scene.appendChild(el);
-
     let size, base;
     if(type==='ery'){ size=60; base=SPEED.ery; }
     else if(type==='leu'){ size=70; base=SPEED.leu; }
     else { size=rnd(30,45); base=rnd(.5,1);
-           el.style.background=grads[Math.floor(Math.random()*grads.length)];
-           el.style.boxShadow='0 0 8px rgba(0,0,0,.35)'; }
-
+      el.style.background=grads[Math.floor(Math.random()*grads.length)];
+      el.style.boxShadow='0 0 8px rgba(0,0,0,.35)'; }
     el.style.width=el.style.height=`${size}px`;
     x ??= rnd(size/2, W-size/2);
     y ??= rnd(size/2, H-size/2);
@@ -59,21 +48,31 @@ window.addEventListener('DOMContentLoaded', () => {
     ents.push({el,type,x,y,vx,vy,size,base});
   }
 
-  /* стартовые клетки */
-  Array.from({length:START.ery}).forEach(()=>spawn('ery'));
-  Array.from({length:START.leu}).forEach(()=>spawn('leu'));
-  Array.from({length:START.bac}).forEach(()=>spawn('bac'));
+  function start(){
+    ents = [];
+    timers = [];
+    ended = false;
+    antibiotic = false;
+    immunodef = false;
+    scene.innerHTML = '';
+    banner.classList.remove('show');
+    btnIm.disabled = false;
 
-  /* размножение бактерий */
-  timers.push(setInterval(()=>{
-    if(ended) return;
-    ents.filter(e=>e.type==='bac').forEach(b=>{
-      const ang=Math.random()*Math.PI*2,d=rnd(10,25);
-      spawn('bac', b.x+Math.cos(ang)*d, b.y+Math.sin(ang)*d);
-    });
-  },REPL_MS));
+    Array.from({length:START.ery}).forEach(()=>spawn('ery'));
+    Array.from({length:START.leu}).forEach(()=>spawn('leu'));
+    Array.from({length:START.bac}).forEach(()=>spawn('bac'));
 
-  /* антибиотик */
+    timers.push(setInterval(()=>{
+      if(ended) return;
+      ents.filter(e=>e.type==='bac').forEach(b=>{
+        const ang=Math.random()*Math.PI*2,d=rnd(10,25);
+        spawn('bac', b.x+Math.cos(ang)*d, b.y+Math.sin(ang)*d);
+      });
+    },REPL_MS));
+
+    loop();
+  }
+
   function startAntibiotic(){
     if(antibiotic||immunodef||ended) return;
     antibiotic=true;
@@ -84,11 +83,7 @@ window.addEventListener('DOMContentLoaded', () => {
     },ANTIB_MS));
   }
   btnAb.onclick=startAntibiotic;
-
-  /* Г-КСФ */
   btnG.onclick=()=>{ if(!ended) Array.from({length:5}).forEach(()=>spawn('leu')); };
-
-  /* иммунодефицит */
   btnIm.onclick=()=>{
     if(immunodef||ended) return;
     immunodef=true; btnIm.disabled=true;
@@ -99,7 +94,6 @@ window.addEventListener('DOMContentLoaded', () => {
     timers.push(setInterval(()=>spawn('bac'),300));
   };
 
-  /* вспышка бактерий */
   scene.addEventListener('click',e=>{
     if(ended) return;
     const r=scene.getBoundingClientRect();
@@ -110,27 +104,23 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* финал */
   function finish(text,color,win){
-    banner.textContent=text; banner.style.color=color;
+    resultText.textContent = text;
     banner.classList.toggle('win',win);
     banner.classList.add('show');
+    resultText.style.color = color;
     ended=true;
     cancelAnimationFrame(rafId);
     timers.forEach(id=>clearInterval(id));
   }
 
-  /* цикл анимации */
   function loop(){
     rafId=requestAnimationFrame(loop);
     let bacArea=0;
-
     for(const e of ents){
       const factor=(e.type==='leu') ? (antibiotic?2:1)
-                   :(e.type==='bac'&&antibiotic?0.3:1);
+                  :(e.type==='bac'&&antibiotic?0.3:1);
       const speed=e.base*factor;
-
-      /* лейкоцит → ближайшая бактерия */
       if(e.type==='leu'){
         let tgt=null,min=Infinity;
         ents.forEach(b=>{
@@ -142,23 +132,15 @@ window.addEventListener('DOMContentLoaded', () => {
           e.vx=(dx/len)*speed; e.vy=(dy/len)*speed;
         } else { e.vx=e.vy=0; }
       }
-
-      /* площадь бактерий */
       if(e.type==='bac') bacArea+=Math.PI*(e.size/2)**2;
-
-      /* движение + отражение */
       e.x+=e.vx; e.y+=e.vy;
       if(e.x<e.size/2||e.x>W-e.size/2) e.vx*=-1;
       if(e.y<e.size/2||e.y>H-e.size/2) e.vy*=-1;
       e.el.style.left=`${e.x}px`; e.el.style.top=`${e.y}px`;
-
-      /* вращаем эритроциты */
       if(e.type==='ery'){
         const r=(+e.el.dataset.r||0)+1; e.el.dataset.r=r;
         e.el.style.transform=`translate(-50%,-50%) rotate(${r}deg)`;
       }
-
-      /* лейкоцит уничтожает бактерию */
       if(e.type==='leu'){
         for(const b of ents) if(b.type==='bac'){
           if(Math.hypot(b.x-e.x,b.y-e.y) < (e.size+b.size)/2){
@@ -167,13 +149,17 @@ window.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-
     if(!ended){
       const ratio=bacArea/(W*H);
       if(ratio>0.9) finish('Смерть от сепсиса',LOSS,false);
       else if(!ents.some(e=>e.type==='bac'))
-                     finish('Выздоровление! Спасибо, доктор!',WIN,true);
+                    finish('Выздоровление! Спасибо, доктор!',WIN,true);
     }
   }
-  loop();
+
+  restartBtn.onclick = () => {
+    start();
+  };
+
+  start();
 });
