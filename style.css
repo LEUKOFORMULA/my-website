@@ -1,66 +1,66 @@
-/* Базовые стили страницы */
+/* ============= Базовые стили страницы ============= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
+body{
   font-family: system-ui, sans-serif;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background: radial-gradient(circle, #ffecec 0%, #ffffff 80%);
+  height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  background: radial-gradient(circle,#ffecec 0%,#fff 80%);
   overflow: hidden;
 }
-h1 {
-  margin: 20px 0 10px;
-  color: #a00000;
-  text-align: center;
-  font-size: clamp(1.4rem, 2vw + 1rem, 2.2rem);
+h1{
+  margin: 18px 0 8px; color:#a00000;
+  font-size:clamp(1.4rem,2vw+1rem,2.2rem); text-align:center;
 }
 
-/* Игровая зона */
-#scene {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  max-width: 1000px;
-  border: 2px solid #ffdddd;
-  border-radius: 12px;
-  overflow: hidden;
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(255,255,255,0) 0 20px,
-    rgba(255,240,240,0.4) 20px 40px
-  );
+/* ============= Игровая зона ============= */
+#scene{
+  position: relative; flex:1; width:100%; max-width:1000px;
+  border:2px solid #ffdddd; border-radius:12px; overflow:hidden;
+  background: repeating-linear-gradient(135deg,
+      rgba(255,255,255,0) 0 20px,
+      rgba(255,240,240,.4) 20px 40px);
 }
 
-/* Общие свойства частиц */
-.entity {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;          /* чтобы курсор не цеплялся */
-  transform: translate(-50%, -50%);
+/* ============= Кнопки управления ============= */
+button{
+  position: fixed; top:12px; padding:10px 14px;
+  font-size:.9rem; border:none; border-radius:8px;
+  color:#fff; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,.25);
+}
+#saveBtn { right:172px; background:#4caf50; }
+#loadBtn { right: 96px; background:#2196f3; }
+#immunoBtn{ right: 12px; background:#ff6161; }
+button:disabled{opacity:.55;cursor:default}
+
+/* ============= Экран Game Over ============= */
+#gameOver{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.8); color:#ff3232; font-weight:700;
+  font-size:clamp(2rem,6vw,5rem); letter-spacing:2px;
+  text-shadow:0 0 6px #000; opacity:0; pointer-events:none; transition:opacity .8s;
+}
+#gameOver.show{opacity:1}
+
+/* ============= Общее для частиц ============= */
+.entity{
+  position:absolute; border-radius:50%; pointer-events:none;
+  transform:translate(-50%,-50%);
 }
 
-/* Эритроцит (красная клетка) */
-.erythrocyte {
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle at 30% 30%, #cc0000, #840000);
-  box-shadow: 0 0 10px rgba(200, 0, 0, 0.4);
+/* Эритроцит */
+.erythrocyte{
+  width:60px;height:60px;
+  background:radial-gradient(circle at 30% 30%,#cc0000,#840000);
+  box-shadow:0 0 10px rgba(200,0,0,.4);
 }
 
-/* Лейкоцит (белая клетка) */
-.leukocyte {
-  width: 70px;
-  height: 70px;
-  background: radial-gradient(circle at 30% 30%, #d8f1ff, #9ad0ff 70%, #79bfff);
-  box-shadow: 0 0 12px rgba(0, 120, 255, 0.5);
+/* Лейкоцит */
+.leukocyte{
+  width:70px;height:70px;
+  background:radial-gradient(circle at 30% 30%,#d8f1ff,#9ad0ff 70%,#79bfff);
+  box-shadow:0 0 12px rgba(0,120,255,.5);
 }
 
-/* Бактерия */
-.bacteria {
-  width: 40px;
-  height: 40px;
-  background: radial-gradient(circle at 30% 30%, #1fa700, #0b6400 70%);
-  box-shadow: 0 0 8px rgba(0, 150, 0, 0.6);
-}
+/* Бактерия + эффект замедления */
+.bacteria{transition:filter .2s;}
+.bacteria.slow{filter:brightness(.6) saturate(.6);}
