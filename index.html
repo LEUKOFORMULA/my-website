@@ -1,24 +1,23 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🩸 Кровь: симулятор иммунитета</title>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>🩸 Иммунитет против инфекции</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Клетки крови против бактерий</h1>
+  <h1>Клетки крови vs бактерии</h1>
 
-  <!-- Панель управления -->
-  <button id="saveBtn"   title="Сохранить игру">💾 Сохранить</button>
-  <button id="loadBtn"   title="Загрузить игру">⟳ Загрузить</button>
-  <button id="immunoBtn" title="Иммунодефицит">🛑 Иммунодефицит</button>
+  <div class="panel">
+    <button id="antibiotic">💊 Антибиотик</button>
+    <button id="gcsf">⬆️ Г-КСФ</button>
+    <button id="immunodef">🛑 Иммунодефицит</button>
+  </div>
 
-  <!-- «Организм» -->
   <div id="scene"></div>
-
-  <!-- Итоговая надпись (появляется победа/поражение) -->
-  <div id="overlay">...</div>
+  <div id="banner">...</div>
 
   <script src="script.js"></script>
 </body>
